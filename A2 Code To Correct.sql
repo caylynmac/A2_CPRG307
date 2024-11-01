@@ -97,7 +97,7 @@ BEGIN
           SELECT vendorID
             INTO v_name2
             FROM gggs_vendor
-           WHERE name = r_gggs.column3;     
+           WHERE name = r_gggs.column2;     
       
           INSERT INTO gggs_stock
           VALUES (gggs_stock_seq.NEXTVAL, v_name1, v_name2, r_gggs.column3,
@@ -132,7 +132,7 @@ BEGIN
         ROLLBACK;
 
         v_message := SQLERRM;
-        dbms_output.put_line(v_message);
+
         INSERT INTO  gggs_error_log_table
         VALUES 
          (r_gggs.data_type, r_gggs.process_type, v_message);
