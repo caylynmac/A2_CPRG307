@@ -14,6 +14,7 @@ DECLARE
   k_no_change_numb    CONSTANT    NUMBER := -1;  
   v_name1                       gggs_stock.name%TYPE;
   v_name2                       gggs_stock.name%TYPE; 
+  v_name3                       gggs_stock.name%TYPE; 
   v_message                     gggs_error_log_table.error_message%TYPE;  
 
   CURSOR c_gggs IS
@@ -92,8 +93,13 @@ BEGIN
           SELECT categoryID
             INTO v_name1
             FROM gggs_category
-           WHERE name = r_gggs.column1;
-         
+         WHERE name = r_gggs.column1; 
+
+        SELECT name
+            INTO v_name3
+            FROM gggs_stock
+           WHERE name != r_gggs.column3;
+
           SELECT vendorID
             INTO v_name2
             FROM gggs_vendor
@@ -102,6 +108,7 @@ BEGIN
           INSERT INTO gggs_stock
           VALUES (gggs_stock_seq.NEXTVAL, v_name1, v_name2, r_gggs.column3,
                   r_gggs.column4, r_gggs.column7, r_gggs.column8, k_active_status);
+          
                 
         ELSIF (r_gggs.process_type = k_status) THEN
           UPDATE gggs_stock
