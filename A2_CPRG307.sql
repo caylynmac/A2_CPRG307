@@ -22,10 +22,6 @@ DECLARE
       FROM gggs_data_upload
 	 ORDER BY loadID;  
 
-  CURSOR c_stock_name IS
-    SELECT name
-      FROM gggs_stock;
-
 BEGIN
 
   FOR r_gggs IN c_gggs LOOP
@@ -97,18 +93,13 @@ BEGIN
           SELECT categoryID
             INTO v_name1
             FROM gggs_category
-         WHERE name = r_gggs.column1; 
+         WHERE name = r_gggs.column1 AND r_gggs.data_processed = k_data_unprocessed; 
 
           SELECT vendorID
             INTO v_name2
             FROM gggs_vendor
-           WHERE name = r_gggs.column2;  
+           WHERE name = r_gggs.column2 AND r_gggs.data_processed = k_data_unprocessed;  
 
-        FOR r_stock_name IN c_stock_name LOOP
-          IF (r_stock_name.name = r_gggs.column3) THEN
-            RAISE ex_duplicate_stock;
-          END IF;
-        END LOOP;
         
           INSERT INTO gggs_stock
           VALUES (gggs_stock_seq.NEXTVAL, v_name1, v_name2, r_gggs.column3,
@@ -140,7 +131,7 @@ BEGIN
 	  COMMIT;
 	
     EXCEPTION 
-      WHEN ex_duplicate_stock THEN
+      WHEN no_data_found THEN
         ROLLBACK;
       WHEN OTHERS THEN 
         ROLLBACK;
